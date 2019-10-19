@@ -8,6 +8,9 @@ import math
 class RandomRotateCrop():
     """ Rotate the image and crop the black border out """
 
+    def __init__(self, probability):
+        self.probability = probability
+
     def rotate_image(self, image, angle):
         """
         Rotates an OpenCV 2 / NumPy image about it's centre by the given angle
@@ -136,19 +139,22 @@ class RandomRotateCrop():
         return image[y1:y2, x1:x2]
 
     def __call__(self, image):
-        img_file = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-        image_height, image_width = img_file.shape[0:2]
-        rotate = random.randint(0, 360)
-        rotate_rad = rotate*0.0174532925
-        image_rotated = self.rotate_image(img_file, rotate)
-        image_rotated_cropped = self.crop_around_center(
-                    image_rotated,
-                    *self.largest_rotated_rect(
-                    image_width,
-                    image_height,
-                    math.radians(rotate)
+        rand = random.uniform(0,1)
+        if rand < self.probability:
+            img_file = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+            image_height, image_width = img_file.shape[0:2]
+            rotate = random.randint(0, 360)
+            rotate_rad = rotate*0.0174532925
+            image_rotated = self.rotate_image(img_file, rotate)
+            image_rotated_cropped = self.crop_around_center(
+                        image_rotated,
+                        *self.largest_rotated_rect(
+                        image_width,
+                        image_height,
+                        math.radians(rotate)
+                        )
                     )
-                )
-        img_convert = cv2.cvtColor(image_rotated_cropped, cv2.COLOR_BGR2RGB)
-        img_pil_transformed = Image.fromarray(img_convert)
-        return img_pil_transformed
+            img_convert = cv2.cvtColor(image_rotated_cropped, cv2.COLOR_BGR2RGB)
+            img_pil_transformed = Image.fromarray(img_convert)
+            return img_pil_transformed
+        return image
