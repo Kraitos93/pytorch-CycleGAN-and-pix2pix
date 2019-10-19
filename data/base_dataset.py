@@ -81,6 +81,8 @@ def get_params(opt, size):
 
 def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, convert=True, B=False):
     transform_list = []
+    if 'RandomRotateCrop' in opt.preprocess and B:
+        transform_list.append(RandomRotateCrop(0.5))
     if grayscale:
         transform_list.append(transforms.Grayscale(1))
     if 'resize' in opt.preprocess:
@@ -94,8 +96,6 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
             transform_list.append(transforms.RandomCrop(opt.crop_size))
         else:
             transform_list.append(transforms.Lambda(lambda img: __crop(img, params['crop_pos'], opt.crop_size)))
-    if 'RandomRotateCrop' in opt.preprocess and B:
-        transform_list.append(RandomRotateCrop(0.5))
     if opt.preprocess == 'none':
         transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
 
