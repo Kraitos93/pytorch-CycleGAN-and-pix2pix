@@ -166,10 +166,11 @@ class GaussianNoise():
     def __init__(self, sigma):
         self.sigma = sigma
     def __call__(self, image):
-        image = np.array(image)
-        noise = np.random.normal(loc=0, scale=1, size=image.shape)
-        noisy = np.clip((image + noise*0.1),0,1)
-        return Image.fromarray(noisy, 'RGB')
+        img_file = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        noise = np.random.normal(loc=0, scale=1, size=img_file.shape)
+        noisy = np.clip((img_file + noise*0.1),0,1)
+        noisy = cv2.cvtColor(noisy, cv2.COLOR_BGR2RGB)
+        return Image.fromarray(img_file)
 
 class GaussianNoiseTensor():
     """ Add gaussian noise to a tensor """
