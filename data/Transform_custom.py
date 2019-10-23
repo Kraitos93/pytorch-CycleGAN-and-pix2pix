@@ -178,6 +178,8 @@ class GaussianNoiseTensor():
         self.mean = mean
         self.variance = variance
     def __call__(self, images):
-        noise = images.data.new(images.size()).normal_(self.mean, self.variance)
-        return images + noise
+        image_array = images.numpy()
+        noise_img = random_noise(image_array, var=0.05**2)
+        noise_img = torch.from_numpy(noise_img)
+        return noise_img
             
