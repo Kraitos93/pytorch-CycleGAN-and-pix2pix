@@ -126,6 +126,7 @@ class CycleGANModel(BaseModel):
         self.rec_A = self.netG_B(self.fake_B)   # G_B(G_A(A))
         self.fake_A = self.netG_B(self.real_B)  # G_B(B)
         self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
+        self.noise_A_real = Compose([GaussianNoise()])(self.real_A)
 
     def backward_D_basic(self, netD, real, fake, A):
         """Calculate GAN loss for the discriminator
@@ -143,7 +144,7 @@ class CycleGANModel(BaseModel):
         real_img = real
         if self.gaussian_noise:
             if A:
-                self.noise_A_real = (real_img)
+                #self.noise_A_real = real_img
                 real_img = self.noise_A_real
             else:
                 self.noise_B_real = Compose([GaussianNoise()])(real_img)
@@ -155,7 +156,7 @@ class CycleGANModel(BaseModel):
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
             if A:
-                self.noise_A_fake = (fake_image)
+                self.noise_A_fake = fake_image
                 fake_image = self.noise_A_fake
             else:
                 self.noise_B_fake = Compose([GaussianNoise()])(fake_image)
