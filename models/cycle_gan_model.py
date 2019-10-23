@@ -155,10 +155,10 @@ class CycleGANModel(BaseModel):
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
             if A:
-                self.noise_A_fake = Compose([GaussianNoiseTensor()])(fake_image)
+                self.noise_A_fake = Compose([GaussianNoiseTensor(0.1,0.1)])(fake_image)
                 fake_image = self.noise_A_fake
             else:
-                self.noise_B_fake = Compose([GaussianNoiseTensor()])(fake_image)
+                self.noise_B_fake = Compose([GaussianNoiseTensor(0.1,0.1)])(fake_image)
                 fake_image = self.noise_B_fake
         pred_fake = netD(fake_image)
         loss_D_fake = self.criterionGAN(pred_fake, False)

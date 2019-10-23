@@ -163,11 +163,13 @@ class RandomRotateCrop():
 
 class GaussianNoise():
     """ Add gaussian noise to a image """
+    def __init__(self, sigma):
+        self.sigma = sigma
     def __call__(self, image):
         image = np.array(image)
         row,col,ch= image.shape
         h,w,ch = image.shape
-        noise = np.random.randn(h, w, ch) * 0.1
+        noise = np.random.randn(h, w, ch) * self.sigma
         noisy = image + noise
         return Image.fromarray(noisy, 'RGB')
 
