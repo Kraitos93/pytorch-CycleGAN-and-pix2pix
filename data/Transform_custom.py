@@ -166,7 +166,7 @@ class GaussianNoise():
     def __call__(self, images):
         numpy_images = images.numpy()
         it = np.nditer(numpy_images)
-        output = np.array()
+        output = []
         for img in it:
             gaussian_img = Lambda(lambda x : x + torch.randn_like(x))(img) 
             np.append(output, gaussian_img)
