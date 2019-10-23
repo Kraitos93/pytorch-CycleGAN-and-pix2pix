@@ -162,7 +162,6 @@ class RandomRotateCrop():
         return image
 
 class GaussianNoise():
-    
+    """ Add gaussian noise to an image """
     def __call__(self, image):
-        return Lambda(lambda x : x + torch.randn_like(x))(image)
-        
+        return Lambda(lambda x : x + torch.randn_like(x))(image)     

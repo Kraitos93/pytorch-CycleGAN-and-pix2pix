@@ -135,14 +135,14 @@ class CycleGANModel(BaseModel):
         # Real
         # Add some Gaussian noise to the sample if the parameter is set in preprocesing.
         if self.gaussian_noise:
-            real = Compose([GaussianNoise])(real)
+            real = Compose([GaussianNoise()])(real)
         pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
         fake_image = fake.detach()
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
-            fake_image = Compose([GaussianNoise])(fake_image)
+            fake_image = Compose([GaussianNoise()])(fake_image)
         pred_fake = netD(fake_image)
         loss_D_fake = self.criterionGAN(pred_fake, False)
         # Combined loss and calculate gradients
