@@ -180,6 +180,6 @@ class GaussianNoiseTensor():
     def __call__(self, images):
         image_array = images.numpy()
         noise_img = random_noise(image_array, var=0.05**2)
-        noise_img = torch.from_numpy(noise_img)
+        noise_img = torch.from_numpy(noise_img).float()
         return noise_img
             
