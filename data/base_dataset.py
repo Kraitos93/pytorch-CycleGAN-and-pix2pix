@@ -7,7 +7,7 @@ import numpy as np
 import torch.utils.data as data
 from PIL import Image
 import torchvision.transforms as transforms
-from data.Transform_custom import RandomRotateCrop
+from data.Transform_custom import *
 from abc import ABC, abstractmethod
 
 
@@ -79,10 +79,12 @@ def get_params(opt, size):
     return {'crop_pos': (x, y), 'flip': flip}
 
 
-def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, convert=True, B=False):
+def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, convert=True, B=False, Noise=False):
     transform_list = []
     if 'RandomRotateCrop' in opt.preprocess and B:
         transform_list.append(RandomRotateCrop(0.5))
+    if opt.Gaussian_Noise and Noise:
+        transform_list.append(GaussianNoise())
     if grayscale:
         transform_list.append(transforms.Grayscale(1))
     if 'resize' in opt.preprocess:

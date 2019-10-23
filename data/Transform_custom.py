@@ -162,13 +162,21 @@ class RandomRotateCrop():
         return image
 
 class GaussianNoise():
-    """ Add gaussian noise to a batch of tensor images """
+    """ Add gaussian noise to a image """
+    def __call__(self, image):
+        image = np.array(image)
+        row,col,ch= image.shape
+        h,w,ch = image.shape
+        noise = np.random.randn(h, w, ch) * 0.1
+        noisy = image + noise
+        return Image.fromarray(noisy, 'RGB')
+
+class GaussianNoiseTensor():
+    """ Add gaussian noise to a tensor """
+    def __init__(self, mean, variance):
+        self.mean = mean
+        self.variance = variance
     def __call__(self, images):
-        numpy_images = images.numpy()
-        it = np.nditer(numpy_images)
-        output = []
-        for img in it:
-            gaussian_img = Lambda(lambda x : x + torch.randn_like(x))(img) 
-            np.append(output, gaussian_img)
-        return torch.from_numpy(output)
+        noise = images.data.new(images.size()).normal_(self.mean, self.variance)
+        return images + noise
             

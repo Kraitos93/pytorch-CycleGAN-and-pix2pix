@@ -4,7 +4,7 @@ from util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
 from torchvision.transforms import Compose
-from data.Transform_custom import GaussianNoise
+from data.Transform_custom import *
 from torchvision.utils import save_image
 
 
@@ -118,6 +118,8 @@ class CycleGANModel(BaseModel):
         AtoB = self.opt.direction == 'AtoB'
         self.real_A = input['A' if AtoB else 'B'].to(self.device)
         self.real_B = input['B' if AtoB else 'A'].to(self.device)
+        self.noise_A_real = input['A_noise' if AtoB else 'B_noise']
+        self.noise_B_real = input['B_noise' if AtoB else 'A_noise']
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
@@ -143,10 +145,8 @@ class CycleGANModel(BaseModel):
         real_img = real
         if self.gaussian_noise:
             if A:
-                self.noise_A_real = Compose([GaussianNoise()])(real_img)
                 real_img = self.noise_A_real
             else:
-                self.noise_B_real = Compose([GaussianNoise()])(real_img)
                 real_img = self.noise_B_real
         pred_real = netD(real_img)
         loss_D_real = self.criterionGAN(pred_real, True)
@@ -155,10 +155,10 @@ class CycleGANModel(BaseModel):
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
             if A:
-                self.noise_A_fake = Compose([GaussianNoise()])(fake_image)
+                self.noise_A_fake = Compose([GaussianNoiseTensor()])(fake_image)
                 fake_image = self.noise_A_fake
             else:
-                self.noise_B_fake = Compose([GaussianNoise()])(fake_image)
+                self.noise_B_fake = Compose([GaussianNoiseTensor()])(fake_image)
                 fake_image = self.noise_B_fake
         pred_fake = netD(fake_image)
         loss_D_fake = self.criterionGAN(pred_fake, False)
@@ -194,6 +194,7 @@ class CycleGANModel(BaseModel):
             self.loss_idt_A = 0
             self.loss_idt_B = 0
 
+        #TODO: When we use gaussian noise we have to use the images with noise.
         # GAN loss D_A(G_A(A))
         self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
         # GAN loss D_B(G_B(B))
