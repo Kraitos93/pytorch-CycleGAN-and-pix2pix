@@ -4,7 +4,7 @@ from util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
 from torchvision.transforms import Compose
-from Transform_custom import GaussianNoise
+from data.Transform_custom import GaussianNoise
 
 
 class CycleGANModel(BaseModel):
