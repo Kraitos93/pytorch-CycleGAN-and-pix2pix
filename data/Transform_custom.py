@@ -167,10 +167,8 @@ class GaussianNoise():
         self.sigma = sigma
     def __call__(self, image):
         image = np.array(image)
-        row,col,ch= image.shape
-        h,w,ch = image.shape
-        noise = np.random.randn(h, w, ch) * self.sigma
-        noisy = image + noise
+        noise = np.random.normal(loc=0, scale=1, size=image.shape)
+        noisy = np.clip((image + noise*0.1),0,1)
         return Image.fromarray(noisy, 'RGB')
 
 class GaussianNoiseTensor():
