@@ -62,11 +62,11 @@ class CycleGANModel(BaseModel):
         if self.isTrain and self.opt.lambda_identity > 0.0:  # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
             visual_names_A.append('idt_B')
             visual_names_B.append('idt_A')
-        if self.opt.Gaussian_Noise:
-            visual_names_A.append('noise_A_real')
-            visual_names_A.append('noise_A_fake')
-            visual_names_B.append('noise_B_real')
-            visual_names_B.append('noise_B_fake')
+        #if self.opt.Gaussian_Noise:
+        #    visual_names_A.append('noise_A_real')
+        #    visual_names_A.append('noise_A_fake')
+        #    visual_names_B.append('noise_B_real')
+        #    visual_names_B.append('noise_B_fake')
 
         self.visual_names = visual_names_A + visual_names_B  # combine visualizations for A and B
         # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>.
@@ -140,21 +140,22 @@ class CycleGANModel(BaseModel):
         """
         # Real
         # Add some Gaussian noise to the sample if the parameter is set.
+        real_img = real
         if self.gaussian_noise:
             if A:
-                self.noise_A_real = Compose([GaussianNoise()])(real)
-                real = self.noise_A_real
+                self.noise_A_real = (real_img)
+                real_img = self.noise_A_real
             else:
-                self.noise_B_real = Compose([GaussianNoise()])(real)
-                real = self.noise_B_real
-        pred_real = netD(real)
+                self.noise_B_real = Compose([GaussianNoise()])(real_img)
+                real_img = self.noise_B_real
+        pred_real = netD(real_img)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
         fake_image = fake.detach()
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
             if A:
-                self.noise_A_fake = Compose([GaussianNoise()])(fake_image)
+                self.noise_A_fake = (fake_image)
                 fake_image = self.noise_A_fake
             else:
                 self.noise_B_fake = Compose([GaussianNoise()])(fake_image)
