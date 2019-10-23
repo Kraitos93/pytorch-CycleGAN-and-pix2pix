@@ -5,6 +5,7 @@ import random
 import math
 from torchvision.transforms import Lambda
 import torch
+from skimage.util import random_noise
 
 
 class RandomRotateCrop():
@@ -166,11 +167,10 @@ class GaussianNoise():
     def __init__(self, sigma):
         self.sigma = sigma
     def __call__(self, image):
-        img_file = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-        noise = np.random.normal(loc=0, scale=1, size=img_file.shape)
-        noisy = np.clip((img_file + noise*0.1),0,1)
-        noisy = cv2.cvtColor(noisy, cv2.COLOR_BGR2RGB)
-        return Image.fromarray(img_file)
+        image_array = np.asarray(image)
+        noise_img = random_noise(image_array, var=0.05**2)
+        noise_img = (255*noise_img).astype(np.uint8)
+        return Image.fromarray(noise_img)
 
 class GaussianNoiseTensor():
     """ Add gaussian noise to a tensor """
