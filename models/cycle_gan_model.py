@@ -5,6 +5,7 @@ from .base_model import BaseModel
 from . import networks
 from torchvision.transforms import Compose
 from data.Transform_custom import GaussianNoise
+from torchvision.utils import save_image
 
 
 class CycleGANModel(BaseModel):
@@ -61,6 +62,11 @@ class CycleGANModel(BaseModel):
         if self.isTrain and self.opt.lambda_identity > 0.0:  # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
             visual_names_A.append('idt_B')
             visual_names_B.append('idt_A')
+        if self.opt.GaussianNoise:
+            visual_names_A.append('noise_A_real')
+            visual_names_A.append('noise_A_fake')
+            visual_names_B.append('noise_B_real')
+            visual_names_B.append('noise_B_fake')
 
         self.visual_names = visual_names_A + visual_names_B  # combine visualizations for A and B
         # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>.
@@ -121,7 +127,7 @@ class CycleGANModel(BaseModel):
         self.fake_A = self.netG_B(self.real_B)  # G_B(B)
         self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
 
-    def backward_D_basic(self, netD, real, fake):
+    def backward_D_basic(self, netD, real, fake, A):
         """Calculate GAN loss for the discriminator
 
         Parameters:
@@ -133,16 +139,26 @@ class CycleGANModel(BaseModel):
         We also call loss_D.backward() to calculate the gradients.
         """
         # Real
-        # Add some Gaussian noise to the sample if the parameter is set in preprocesing.
+        # Add some Gaussian noise to the sample if the parameter is set.
         if self.gaussian_noise:
-            real = Compose([GaussianNoise()])(real)
+            if A:
+                self.noise_A_real = Compose([GaussianNoise()])(real)
+                real = self.noise_A_real
+            else:
+                self.noise_B_real = Compose([GaussianNoise()])(real)
+                real = self.noise_B_real
         pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
         fake_image = fake.detach()
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
-            fake_image = Compose([GaussianNoise()])(fake_image)
+            if A:
+                self.noise_A_fake = Compose([GaussianNoise()])(fake_image)
+                fake_image = self.noise_A_fake
+            else:
+                self.noise_B_fake = Compose([GaussianNoise()])(fake_image)
+                fake_image = self.noise_B_fake
         pred_fake = netD(fake_image)
         loss_D_fake = self.criterionGAN(pred_fake, False)
         # Combined loss and calculate gradients
@@ -153,12 +169,12 @@ class CycleGANModel(BaseModel):
     def backward_D_A(self):
         """Calculate GAN loss for discriminator D_A"""
         fake_B = self.fake_B_pool.query(self.fake_B)
-        self.loss_D_A = self.backward_D_basic(self.netD_A, self.real_B, fake_B)
+        self.loss_D_A = self.backward_D_basic(self.netD_A, self.real_B, fake_B, True)
 
     def backward_D_B(self):
         """Calculate GAN loss for discriminator D_B"""
         fake_A = self.fake_A_pool.query(self.fake_A)
-        self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_A, fake_A)
+        self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_A, fake_A, False)
 
     def backward_G(self):
         """Calculate the loss for generators G_A and G_B"""
