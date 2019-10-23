@@ -3,6 +3,8 @@ import itertools
 from util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
+from torchvision.transforms import Compose
+from Transform_custom import GaussianNoise
 
 
 class CycleGANModel(BaseModel):
@@ -95,6 +97,9 @@ class CycleGANModel(BaseModel):
             self.optimizer_D = torch.optim.Adam(itertools.chain(self.netD_A.parameters(), self.netD_B.parameters()), lr=opt.lr, betas=(opt.beta1, 0.999))
             self.optimizers.append(self.optimizer_G)
             self.optimizers.append(self.optimizer_D)
+        
+        #Determine if we add Gaussian Noise to the samples
+        self.gaussian_noise = opt.Gaussian_Noise
 
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
@@ -128,10 +133,17 @@ class CycleGANModel(BaseModel):
         We also call loss_D.backward() to calculate the gradients.
         """
         # Real
+        # Add some Gaussian noise to the sample if the parameter is set in preprocesing.
+        if self.gaussian_noise:
+            real = Compose([GaussianNoise])(real)
         pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
-        pred_fake = netD(fake.detach())
+        fake_image = fake.detach()
+        # Add gaussian noise to the fake image as well
+        if self.gaussian_noise:
+            fake_image = Compose([GaussianNoise])(fake_image)
+        pred_fake = netD(fake_image)
         loss_D_fake = self.criterionGAN(pred_fake, False)
         # Combined loss and calculate gradients
         loss_D = (loss_D_real + loss_D_fake) * 0.5

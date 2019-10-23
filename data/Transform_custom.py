@@ -3,6 +3,8 @@ import numpy as np
 from PIL import Image
 import random
 import math
+from torchvision.transforms import Lambda
+import torch
 
 
 class RandomRotateCrop():
@@ -158,3 +160,9 @@ class RandomRotateCrop():
             img_pil_transformed = Image.fromarray(img_convert)
             return img_pil_transformed
         return image
+
+class GaussianNoise():
+    
+    def __call__(self, image):
+        return Lambda(lambda x : x + torch.randn_like(x))(image)
+        
