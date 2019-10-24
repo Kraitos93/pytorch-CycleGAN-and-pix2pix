@@ -35,8 +35,6 @@ class UnalignedDataset(BaseDataset):
         output_nc = self.opt.input_nc if btoA else self.opt.output_nc      # get the number of channels of output image
         self.transform_A = get_transform(self.opt, grayscale=(input_nc == 1))
         self.transform_B = get_transform(self.opt, grayscale=(output_nc == 1), B=True)
-        self.transform_A_noise = get_transform(self.opt, grayscale=(input_nc == 1), Noise=True)
-        self.transform_B_noise = get_transform(self.opt, grayscale=(output_nc == 1), B=True, Noise=True)
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -61,10 +59,8 @@ class UnalignedDataset(BaseDataset):
         # apply image transformation
         A = self.transform_A(A_img)
         B = self.transform_B(B_img)
-        A_noise = self.transform_A_noise(A_img)
-        B_noise = self.transform_B_noise(B_img)
 
-        return {'A': A, 'B': B, 'A_paths': A_path, 'B_paths': B_path, 'A_noise': A_noise, 'B_noise': B_noise}
+        return {'A': A, 'B': B, 'A_paths': A_path, 'B_paths': B_path}
 
     def __len__(self):
         """Return the total number of images in the dataset.

@@ -67,10 +67,12 @@ class CycleGANModel(BaseModel):
             visual_names_A.append('noise_A_fake')
             visual_names_B.append('noise_B_real')
             visual_names_B.append('noise_B_fake')
-            visual_names_B.append('received_image_disc_real_A')
+            visual_names_A.append('received_image_disc_real_A')
             visual_names_B.append('received_image_disc_real_B')
-            visual_names_B.append('received_image_disc_fake_A')
+            visual_names_A.append('received_image_disc_fake_A')
             visual_names_B.append('received_image_disc_fake_B')
+            visual_names_A.append('real_img_before_process_A')
+            visual_names_B.append('real_img_before_process_B')
 
         self.visual_names = visual_names_A + visual_names_B  # combine visualizations for A and B
         # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>.
@@ -149,6 +151,11 @@ class CycleGANModel(BaseModel):
         # Real
         # Add some Gaussian noise to the sample if the parameter is set.
         real_img = real
+        if A:
+            self.real_img_before_process_A = real_img
+        else:
+            self.real_img_before_process_B = real_img
+            
         if self.gaussian_noise:
             if A:
                 self.noise_B_real = Compose([GaussianNoiseTensor()])(real_img)
