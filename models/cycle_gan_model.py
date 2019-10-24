@@ -128,6 +128,8 @@ class CycleGANModel(BaseModel):
         self.rec_A = self.netG_B(self.fake_B)   # G_B(G_A(A))
         self.fake_A = self.netG_B(self.real_B)  # G_B(B)
         self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
+        #self.noise_A_real = Compose([GaussianNoiseTensor()])(self.real_A)
+        #self.noise_A_fake = Compose([GaussianNoiseTensor()])(self.fake_A)
 
     def backward_D_basic(self, netD, real, fake, A):
         """Calculate GAN loss for the discriminator
@@ -144,7 +146,7 @@ class CycleGANModel(BaseModel):
         # Add some Gaussian noise to the sample if the parameter is set.
         real_img = real
         if self.gaussian_noise:
-            if A:
+            if not A:
                 self.noise_A_real = Compose([GaussianNoiseTensor()])(real_img)
                 real_img = self.noise_A_real
             else:
@@ -156,7 +158,7 @@ class CycleGANModel(BaseModel):
         fake_image = fake.detach()
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
-            if A:
+            if not A:
                 self.noise_A_fake = Compose([GaussianNoiseTensor()])(fake_image)
                 fake_image = self.noise_A_fake
             else:
@@ -197,10 +199,20 @@ class CycleGANModel(BaseModel):
             self.loss_idt_B = 0
 
         #TODO: When we use gaussian noise we have to use the images with noise.
+        
+        fake_B = self.fake_B
+        fake_A = self.fake_A
+        #Add the gaussian noise to the generated images if the flag is set
+        if self.gaussian_noise:
+            fake_B = Compose([GaussianNoiseTensor()])(fake_B)
+            fake_A = Compose([GaussianNoiseTensor()])(fake_A)
+            self.noise_A_fake = fake_A
+            self.noise_B_fake = fake_B
+
         # GAN loss D_A(G_A(A))
-        self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
+        self.loss_G_A = self.criterionGAN(self.netD_A(fake_B), True)
         # GAN loss D_B(G_B(B))
-        self.loss_G_B = self.criterionGAN(self.netD_B(self.fake_A), True)
+        self.loss_G_B = self.criterionGAN(self.netD_B(fake_A), True)
         # Forward cycle loss || G_B(G_A(A)) - A||
         self.loss_cycle_A = self.criterionCycle(self.rec_A, self.real_A) * lambda_A
         # Backward cycle loss || G_A(G_B(B)) - B||
