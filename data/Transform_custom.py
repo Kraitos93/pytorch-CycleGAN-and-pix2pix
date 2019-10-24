@@ -174,12 +174,12 @@ class GaussianNoise():
 
 class GaussianNoiseTensor():
     """ Add gaussian noise to a tensor """
-    def __init__(self, mean, variance):
+    def __init__(self, variance=0.5**2, mean=0):
         self.mean = mean
         self.variance = variance
     def __call__(self, images):
         image_array = images.numpy()
-        noise_img = random_noise(image_array, var=0.05**2)
+        noise_img = random_noise(image_array, var=self.variance)
         noise_img = torch.from_numpy(noise_img).float()
         return noise_img
             

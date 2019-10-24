@@ -83,8 +83,8 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
     transform_list = []
     if 'RandomRotateCrop' in opt.preprocess and B:
         transform_list.append(RandomRotateCrop(0.5))
-    if opt.Gaussian_Noise and Noise:
-        transform_list.append(GaussianNoise(0.01))
+    #if opt.Gaussian_Noise and Noise:
+    #    transform_list.append(GaussianNoise(0.01))
     if grayscale:
         transform_list.append(transforms.Grayscale(1))
     if 'resize' in opt.preprocess:
