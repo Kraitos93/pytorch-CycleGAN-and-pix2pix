@@ -174,7 +174,7 @@ class GaussianNoise():
 
 class GaussianNoiseTensor():
     """ Add gaussian noise to a tensor """
-    def __init__(self, variance=0.5**2, mean=0):
+    def __init__(self, variance=0.1**2, mean=0):
         self.mean = mean
         self.variance = variance
     def __call__(self, images):
