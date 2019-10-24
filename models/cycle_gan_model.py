@@ -101,7 +101,7 @@ class CycleGANModel(BaseModel):
             self.fake_A_pool = ImagePool(opt.pool_size)  # create image buffer to store previously generated images
             self.fake_B_pool = ImagePool(opt.pool_size)  # create image buffer to store previously generated images
             # define loss functions
-            self.criterionGAN = networks.GANLoss(opt.gan_mode).to(self.device)  # define GAN loss.
+            self.criterionGAN = networks.GANLoss(opt.gan_mode, opt).to(self.device)  # define GAN loss.
             self.criterionCycle = torch.nn.L1Loss()
             self.criterionIdt = torch.nn.L1Loss()
             # initialize optimizers; schedulers will be automatically created by function <BaseModel.setup>.
@@ -228,8 +228,8 @@ class CycleGANModel(BaseModel):
         fake_A = self.fake_A
         #Add the gaussian noise to the generated images if the flag is set
         if self.gaussian_noise:
-            #fake_B = Compose([GaussianNoiseTensor()])(fake_B.detach())
-            #fake_A = Compose([GaussianNoiseTensor()])(fake_A.detach())
+            #fake_B = Compose([GaussianNoiseTensor()])(fake_B)
+            #fake_A = Compose([GaussianNoiseTensor()])(fake_A)
             self.noise_A_fake = fake_A
             self.noise_B_fake = fake_B
             #fake_B = fake_B.to(self.device)

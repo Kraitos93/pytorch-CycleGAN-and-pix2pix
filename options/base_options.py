@@ -38,6 +38,7 @@ class BaseOptions():
         parser.add_argument('--init_gain', type=float, default=0.02, help='scaling factor for normal, xavier and orthogonal.')
         parser.add_argument('--no_dropout', action='store_true', help='no dropout for the generator')
         parser.add_argument('--Gaussian_Noise', action='store_true', help='Add Gaussian Noise to the samples before the discriminator')
+        parser.add_argument('--label_smoothing', type=float, default=1.0, help='Set label smoothing (default no label smooting)')
         # dataset parameters
         parser.add_argument('--dataset_mode', type=str, default='unaligned', help='chooses how datasets are loaded. [unaligned | aligned | single | colorization]')
         parser.add_argument('--direction', type=str, default='AtoB', help='AtoB or BtoA')
