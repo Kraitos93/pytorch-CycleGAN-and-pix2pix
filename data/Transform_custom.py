@@ -179,7 +179,7 @@ class GaussianNoiseTensor():
         self.variance = variance
     def __call__(self, images):
         images = images.cpu()
-        image_array = images.detatch().numpy()
+        image_array = images.detach().numpy()
         noise_img = random_noise(image_array, var=self.variance)
         noise_img = torch.from_numpy(noise_img).float()
         return noise_img
