@@ -181,8 +181,8 @@ class GaussianNoiseTensor():
         #Images is a tensor that requires_grad
         image_clone = images.cpu()
         image_array = image_clone.numpy()
-        #noise_img = random_noise(image_array, var=self.variance)
-        #noise_img = torch.from_numpy(noise_img).float()
+        noise_img = random_noise(image_array, var=self.variance)
+        noise_img = torch.from_numpy(noise_img).float()
         noise_img = torch.from_numpy(image_array)
         return noise_img
             
