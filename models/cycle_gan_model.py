@@ -227,12 +227,13 @@ class CycleGANModel(BaseModel):
         fake_A = self.fake_A
         #Add the gaussian noise to the generated images if the flag is set
         if self.gaussian_noise:
-            fake_B = Compose([GaussianNoiseTensor()])(fake_B)
-            fake_A = Compose([GaussianNoiseTensor()])(fake_A)
+            with torch.no_grad():
+                fake_B = Compose([GaussianNoiseTensor()])(fake_B)
+                fake_A = Compose([GaussianNoiseTensor()])(fake_A)
             self.noise_A_fake = fake_A
             self.noise_B_fake = fake_B
-            fake_B = fake_B.to(self.device)
-            fake_A = fake_A.to(self.device)
+            #fake_B = fake_B.to(self.device)
+            #fake_A = fake_A.to(self.device)
 
         # GAN loss D_A(G_A(A))
         self.loss_G_A = self.criterionGAN(self.netD_A(fake_B), True)
