@@ -163,7 +163,7 @@ class CycleGANModel(BaseModel):
             else:
                 self.noise_A_real = Compose([GaussianNoiseTensor()])(real_img)
                 real_img = self.noise_A_real
-            real_img = real_img.to(self.device)
+            #real_img = real_img.to(self.device)
         if A:
             self.received_image_disc_real_A = real_img
         else:
@@ -171,6 +171,8 @@ class CycleGANModel(BaseModel):
         pred_real = netD(real_img)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
+        #Detaching the fake image tensor. The graph will not be updated based on this data.
+        #Modify the detached tensor
         fake_image = fake.detach()
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
@@ -180,7 +182,7 @@ class CycleGANModel(BaseModel):
             else:
                 self.noise_B_fake = Compose([GaussianNoiseTensor()])(fake_image)
                 fake_image = self.noise_B_fake
-            fake_image = fake_image.to(self.device)
+            #fake_image = fake_image.to(self.device)
         if A:
             self.received_image_disc_fake_A = fake_image
         else:
