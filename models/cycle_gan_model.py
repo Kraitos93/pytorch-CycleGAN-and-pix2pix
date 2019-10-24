@@ -118,8 +118,8 @@ class CycleGANModel(BaseModel):
         AtoB = self.opt.direction == 'AtoB'
         self.real_A = input['A' if AtoB else 'B'].to(self.device)
         self.real_B = input['B' if AtoB else 'A'].to(self.device)
-        self.noise_A_real = input['A_noise' if AtoB else 'B_noise']
-        self.noise_B_real = input['B_noise' if AtoB else 'A_noise']
+        #self.noise_A_real = input['A_noise' if AtoB else 'B_noise']
+        #self.noise_B_real = input['B_noise' if AtoB else 'A_noise']
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
@@ -146,19 +146,19 @@ class CycleGANModel(BaseModel):
         # Add some Gaussian noise to the sample if the parameter is set.
         real_img = real
         if self.gaussian_noise:
-            if not A:
-                self.noise_A_real = Compose([GaussianNoiseTensor()])(real_img)
-                real_img = self.noise_A_real
-            else:
+            if A:
                 self.noise_B_real = Compose([GaussianNoiseTensor()])(real_img)
                 real_img = self.noise_B_real
+            else:
+                self.noise_A_real = Compose([GaussianNoiseTensor()])(real_img)
+                real_img = self.noise_A_real
         pred_real = netD(real_img)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
         fake_image = fake.detach()
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
-            if not A:
+            if A:
                 self.noise_A_fake = Compose([GaussianNoiseTensor()])(fake_image)
                 fake_image = self.noise_A_fake
             else:
