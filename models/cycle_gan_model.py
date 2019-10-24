@@ -67,6 +67,10 @@ class CycleGANModel(BaseModel):
             visual_names_A.append('noise_A_fake')
             visual_names_B.append('noise_B_real')
             visual_names_B.append('noise_B_fake')
+            visual_names_B.append('received_image_disc_real_A')
+            visual_names_B.append('received_image_disc_real_B')
+            visual_names_B.append('received_image_disc_fake_A')
+            visual_names_B.append('received_image_disc_fake_B')
 
         self.visual_names = visual_names_A + visual_names_B  # combine visualizations for A and B
         # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>.
@@ -152,6 +156,10 @@ class CycleGANModel(BaseModel):
             else:
                 self.noise_A_real = Compose([GaussianNoiseTensor()])(real_img)
                 real_img = self.noise_A_real
+        if A:
+            self.received_image_disc_real_A = real_img
+        else:
+            self.received_image_disc_real_B = real_img
         pred_real = netD(real_img)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
@@ -164,6 +172,10 @@ class CycleGANModel(BaseModel):
             else:
                 self.noise_B_fake = Compose([GaussianNoiseTensor()])(fake_image)
                 fake_image = self.noise_B_fake
+        if A:
+            self.received_image_disc_fake_A = fake_image
+        else:
+            self.received_image_disc_fake_B = fake_image
         pred_fake = netD(fake_image)
         loss_D_fake = self.criterionGAN(pred_fake, False)
         # Combined loss and calculate gradients
