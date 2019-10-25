@@ -223,8 +223,8 @@ class CycleGANModel(BaseModel):
 
         #TODO: When we use gaussian noise we have to use the images with noise.
         
-        fake_B = self.fake_B
-        fake_A = self.fake_A
+        fake_B = self.fake_B.detach()
+        fake_A = self.fake_A.detach()
         #Add the gaussian noise to the generated images if the flag is set
         if self.gaussian_noise:
             fake_B = add_gaussian_noise_to_tensor(fake_B)
