@@ -177,10 +177,10 @@ class CycleGANModel(BaseModel):
         # Add gaussian noise to the fake image as well
         if self.gaussian_noise:
             if A:
-                self.noise_A_fake = Compose([GaussianNoiseTensor()])(fake_image)
+                self.noise_A_fake = Compose([GaussianNoiseTensorPreserve()])(fake_image)
                 fake_image = self.noise_A_fake
             else:
-                self.noise_B_fake = Compose([GaussianNoiseTensor()])(fake_image)
+                self.noise_B_fake = Compose([GaussianNoiseTensorPreserve()])(fake_image)
                 fake_image = self.noise_B_fake
             #fake_image = fake_image.to(self.device)
         if A:
@@ -227,8 +227,8 @@ class CycleGANModel(BaseModel):
         fake_A = self.fake_A
         #Add the gaussian noise to the generated images if the flag is set
         if self.gaussian_noise:
-            #fake_B = Compose([GaussianNoiseTensor()])(fake_B)
-            #fake_A = Compose([GaussianNoiseTensor()])(fake_A)
+            fake_B = Compose([GaussianNoiseTensorPreserve()])(fake_B)
+            fake_A = Compose([GaussianNoiseTensorPreserve()])(fake_A)
             self.noise_A_fake = fake_A
             self.noise_B_fake = fake_B
             #fake_B = fake_B.to(self.device)

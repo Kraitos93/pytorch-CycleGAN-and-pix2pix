@@ -6,6 +6,7 @@ import math
 from torchvision.transforms import Lambda
 import torch
 from skimage.util import random_noise
+import torch.tensor
 
 
 class RandomRotateCrop():
@@ -185,4 +186,11 @@ class GaussianNoiseTensor():
         noise_img = torch.from_numpy(noise_img).float()
         noise_img = torch.from_numpy(image_array)
         return noise_img
-            
+
+class GaussianNoiseTensorPreserve():
+    def __init__(self, varaiance = 0.1**2, mean=0):
+        self.mean = mean
+        self.variance = varaiance
+    
+    def __call__(self, img):
+        return img + Tensor(torch.randn(img.size()).cuda() * self.variance)
