@@ -188,7 +188,7 @@ class GaussianNoiseTensor():
         return noise_img
 
 
-def add_gaussian_noise_to_tensor(img, variance = 0.05**2, mean=0):
+def add_gaussian_noise_to_tensor(img, variance = 0.01**0.5, mean=0):
     print(img)
     noise = img.data.new(img.size()).normal_(mean, variance)
     return img + noise
