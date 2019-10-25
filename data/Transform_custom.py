@@ -189,5 +189,5 @@ class GaussianNoiseTensor():
 
 
 def add_gaussian_noise_to_tensor(img, variance = 0.1**2, mean=0):
-    noise = torch.Tensor(img.data.new(img.size()))
-    return img
+    noise = img.data.new(img.size()).normal_(mean,variance)
+    return img + noise
