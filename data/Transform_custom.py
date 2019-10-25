@@ -193,4 +193,4 @@ class GaussianNoiseTensorPreserve():
         self.variance = varaiance
     
     def __call__(self, img):
-        return img + Tensor(torch.randn(img.size()).cuda() * self.variance)
+        return img + torch.Tensor(torch.randn(img.size()).cuda() * self.variance)
