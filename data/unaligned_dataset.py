@@ -1,8 +1,9 @@
 import os.path
 from data.base_dataset import BaseDataset, get_transform
-from data.image_folder import make_dataset
+from data.image_folder import make_dataset, make_dataset_bb
 from PIL import Image
 import random
+from data.Transform_custom import CropBB
 
 
 class UnalignedDataset(BaseDataset):
@@ -25,6 +26,10 @@ class UnalignedDataset(BaseDataset):
         BaseDataset.__init__(self, opt)
         self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')  # create a path '/path/to/data/trainA'
         self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')  # create a path '/path/to/data/trainB'
+        #TODO: BB Path
+        if 'BBCrop' in self.opt.preprocess:
+            self.dir_A_BB = os.path.join(opt.dataroot, opt.phase + 'A_BB') #Create a path '/path/to/data/trainA_BB'
+            self.A_BB = make_dataset_bb(self.dir_A_BB, 'bbox_A.txt', opt.max_dataset_size)
 
         self.A_paths = sorted(make_dataset(self.dir_A, opt.max_dataset_size))   # load images from '/path/to/data/trainA'
         self.B_paths = sorted(make_dataset(self.dir_B, opt.max_dataset_size))    # load images from '/path/to/data/trainB'
@@ -57,6 +62,11 @@ class UnalignedDataset(BaseDataset):
         A_img = Image.open(A_path).convert('RGB')
         B_img = Image.open(B_path).convert('RGB')
         # apply image transformation
+        # if we do a BB crop this should be done first
+        if 'BBCrop' in self.opt.preprocess:
+            (_, left, top, width, height) = self.A_BB[index]
+            A_img = CropBB(0.5)(A_img, top, left, height, width)
+
         A = self.transform_A(A_img)
         B = self.transform_B(B_img)
 

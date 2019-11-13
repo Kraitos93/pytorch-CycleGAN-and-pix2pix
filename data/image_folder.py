@@ -32,6 +32,24 @@ def make_dataset(dir, max_dataset_size=float("inf")):
     return images[:min(max_dataset_size, len(images))]
 
 
+def getKey(item):
+    return item[0]
+
+def make_dataset_bb(directory, filename, max_dataset_size=float("inf")):
+    assert os.path.isdir(dir), '%s is not a valid directory' % dir
+    f = open(os.path.join(directory, filename), 'r')
+    bb = []
+    for line in f:
+        values = line.split(' ')
+        name = values[0]
+        left = values[1]
+        top = values[2]
+        width = values[3]
+        height = values[4]
+        bb.append((name, top, left, width, height))
+    return sorted(bb[:min(max_dataset_size, len(bb))], key=getKey)
+
+
 def default_loader(path):
     return Image.open(path).convert('RGB')
 

@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import random
 import math
-from torchvision.transforms import Lambda
+from torchvision.transforms import Lambda, functional
 import torch
 from skimage.util import random_noise
 import torch.tensor
@@ -161,6 +161,17 @@ class RandomRotateCrop():
             img_convert = cv2.cvtColor(image_rotated_cropped, cv2.COLOR_BGR2RGB)
             img_pil_transformed = Image.fromarray(img_convert)
             return img_pil_transformed
+        return image
+
+
+class CropBB():
+    """ Add gaussian noise to a image """
+    def __init__(self, probability):
+        self.probability = probability
+    def __call__(self, image, top, left, height, width):
+        rand = random.uniform(0,1)
+        if rand < self.probability:
+            return functional.crop(image, top, left, height, width)
         return image
 
 class GaussianNoise():
