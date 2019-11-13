@@ -63,6 +63,7 @@ class UnalignedDataset(BaseDataset):
         B_img = Image.open(B_path).convert('RGB')
         # apply image transformation
         # if we do a BB crop this should be done first
+        #TODO: We might need to add some random offset to not make an exact crop of the model.
         if 'BBCrop' in self.opt.preprocess:
             (_, left, top, width, height) = self.A_BB[index]
             A_img = CropBB(0.5)(A_img, top, left, height, width)

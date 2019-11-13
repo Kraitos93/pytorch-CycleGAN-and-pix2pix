@@ -36,7 +36,7 @@ def getKey(item):
     return item[0]
 
 def make_dataset_bb(directory, filename, max_dataset_size=float("inf")):
-    assert os.path.isdir(dir), '%s is not a valid directory' % dir
+    assert os.path.isdir(directory), '%s is not a valid directory' % dir
     f = open(os.path.join(directory, filename), 'r')
     bb = []
     for line in f:
