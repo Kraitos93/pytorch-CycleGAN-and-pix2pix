@@ -66,7 +66,7 @@ class UnalignedDataset(BaseDataset):
         #TODO: We might need to add some random offset to not make an exact crop of the model.
         if 'BBCrop' in self.opt.preprocess:
             (_, left, top, width, height) = self.A_BB[index]
-            A_img = CropBB(0.5)(A_img, top, left, height, width)
+            A_img = CropBB(0.5)(A_img, int(top), int(left), int(height), int(width))
 
         A = self.transform_A(A_img)
         B = self.transform_B(B_img)
