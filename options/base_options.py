@@ -50,7 +50,7 @@ class BaseOptions():
         parser.add_argument('--width', type=int, default=256, help='scale width of images to this size')
         parser.add_argument('--crop_size', type=int, default=256, help='then crop to this size')
         parser.add_argument('--max_dataset_size', type=int, default=float("inf"), help='Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.')
-        parser.add_argument('--preprocess', type=str, default='resize', help='scaling and cropping of images at load time [resize_and_crop | crop | scale_width | scale_width_and_crop | resize_and_crop_and_RandomRotateCrop | resize_and_crop_and_RandomRotateCrop_BBCrop | none]')
+        parser.add_argument('--preprocess', type=str, default='resize_and_crop', help='scaling and cropping of images at load time [resize_and_crop | crop | scale_width | scale_width_and_crop | resize_and_crop_and_RandomRotateCrop | resize_and_crop_and_RandomRotateCrop_BBCrop | none]')
         parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data augmentation')
         parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
         # additional parameters
@@ -58,7 +58,7 @@ class BaseOptions():
         parser.add_argument('--load_iter', type=int, default='0', help='which iteration to load? if load_iter > 0, the code will load models by iter_[load_iter]; otherwise, the code will load models by [epoch]')
         parser.add_argument('--verbose', action='store_true', help='if specified, print more debugging information')
         parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}')
-        parser.add_argument('--max_epoch', type=int, default=200, help="The maximum number of epochs that the model will be trained")
+        parser.add_argument('--max_epoch', type=int, default=50, help="The maximum number of epochs that the model will be trained")       
         parser.add_argument('--epoch_from', type=int, default=1, help="Test range lower bound")
         parser.add_argument('--epoch_to', type=int, default=50, help="Test range upper bound")
         parser.add_argument('--range_name', type=str, default='', help="The model name that should be tested in a range test")
