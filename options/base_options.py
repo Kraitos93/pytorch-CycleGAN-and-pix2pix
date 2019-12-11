@@ -61,7 +61,7 @@ class BaseOptions():
         parser.add_argument('--max_epoch', type=int, default=200, help="The maximum number of epochs that the model will be trained")
         parser.add_argument('--epoch_from', type=int, default=1, help="Test range lower bound")
         parser.add_argument('--epoch_to', type=int, default=50, help="Test range upper bound")
-        parser.add_argument('--model_name', type=str, default='', help="The model name that should be tested in a range test")
+        parser.add_argument('--range_name', type=str, default='', help="The model name that should be tested in a range test")
         self.initialized = True
         return parser
 
