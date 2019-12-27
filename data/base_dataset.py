@@ -82,7 +82,7 @@ def get_params(opt, size):
 def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, convert=True, B=False, Noise=False):
     transform_list = []
     if 'RandomRotateCrop' in opt.preprocess and B:
-        transform_list.append(RandomRotateCrop(0.5))
+        transform_list.append(RandomRotateCrop(opt.rotate_crop_alpha))
     #if opt.Gaussian_Noise and Noise:
     #    transform_list.append(GaussianNoise(0.01))
     if grayscale:
